@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>skwiz ui</title>
+    <!-- Use Tailwind CDN so no build step is needed for GitHub Pages -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              geist: ['Geist', 'sans-serif'],
+            }
+          }
+        }
+      }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+      body {
+        margin: 0;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: white;
+      }
+      .view {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        pointer-events: none;
+      }
+      .view.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .nav-link {
+        cursor: pointer;
+        transition: color 0.3s, font-weight 0.3s;
+        font-weight: 300;
+      }
+      .nav-link:hover {
+        color: black;
+      }
+      .nav-link.active {
+        font-weight: 500;
+        color: black;
+      }
+      
+      .nav-why {
+        font-weight: 300;
+        background: #c4c4c4;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+      .nav-why:hover {
+        -webkit-text-fill-color: black;
+      }
+      .nav-why.active {
+        font-weight: 500;
+        background: none;
+        -webkit-text-fill-color: black;
+      }
+    </style>
+</head>
+<body class="min-h-screen bg-white font-geist selection:bg-gray-100 flex flex-col items-center sm:items-start pt-[39px] px-[25px] sm:px-[50px] pb-10 box-border text-center leading-normal tracking-normal relative">
+
+  <nav class="m-0 flex items-start justify-center sm:justify-start gap-[15px] text-left text-[10px] text-[#c4c4c4] font-geist w-full max-w-[1200px] z-10 relative">
+    <div id="nav-home" class="nav-link active relative" onclick="switchTab('home')">home</div>
+    <div id="nav-price" class="nav-link relative" onclick="switchTab('price')">price</div>
+    <div id="nav-why" class="nav-why relative" onclick="switchTab('why')">why it costs this much.</div>
+  </nav>
+
+  <div class="flex-1 w-full flex items-center justify-center relative mt-10 sm:mt-0 z-0 h-full min-h-[400px]">
+      
+      <!-- Home View -->
+      <div id="view-home" class="view active justify-center">
+          <div class="w-[259px] flex flex-col items-center gap-5">
+              <div class="relative font-regular text-center text-[13px] text-medium">
+                  crafting digital experiences for those who notice the details. focus on high-end ui/ux and minimalist aesthetics. building interfaces that feel as good as they look
+              </div>
+              <div class="flex items-center justify-center w-full py-0">
+                  <div class="flex items-center justify-center gap-2.5">
+                      <button id="email-btn" onclick="copyEmail()" class="group relative cursor-pointer border-none py-[5px] px-10 bg-black rounded-[10px] flex items-center justify-center hover:bg-[#333] transition-all min-w-[100px] h-5 box-border">
+                          <div class="relative text-[8px] font-geist text-white text-center z-[1] shrink-0">
+                              <span id="email-text-default" class="group-hover:hidden whitespace-nowrap">email</span>
+                              <span id="email-text-hover" class="hidden group-hover:block whitespace-nowrap">copy</span>
+                              <span id="email-text-copied" class="hidden whitespace-nowrap">copied</span>
+                          </div>
+                      </button>
+                      
+                      <button onclick="window.open('https://t.me/kyfax', '_blank')" class="cursor-pointer border-[#d9d9d9] border-solid border-[1px] py-[3px] px-8 bg-transparent h-5 flex-1 rounded-[10px] box-border flex items-center justify-center hover:bg-[rgba(191,191,191,0.09)] hover:border-[#bfbfbf] transition-all">
+                          <div class="relative text-[8px] font-geist text-black text-center shrink-0">
+                              telegram
+                          </div>
+                      </button>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <!-- Price View -->
+      <div id="view-price" class="view justify-center">
+          <div class="w-[227px] flex flex-col items-center gap-[5px] text-[#c4c4c4]">
+              <div class="flex items-start py-0 px-0">
+                  <div class="relative uppercase tracking-[0.05em] text-[8px]">price: custom logic only.</div>
+              </div>
+              <div class="relative text-[13px] text-black text-center font-light leading-relaxed">
+                  bespoke digital solutions. starts with a vision, ends with a project. inquire for availability.
+              </div>
+          </div>
+      </div>
+
+      <!-- Why View -->
+      <div id="view-why" class="view justify-center">
+         <div class="max-w-[337px] relative font-light text-center text-[13px] text-black">
+              you are not paying for pixels. you are paying for the logic that powers your empire. we don’t just design. we build digital infrastructure. simplicity is the ultimate sophistication.
+          </div>
+      </div>
+
+  </div>
+
+  <script>
+    function switchTab(tabId) {
+      // Hide all views
+      document.querySelectorAll('.view').forEach(el => {
+        el.classList.remove('active');
+      });
+
+      // Clear active nav states
+      document.querySelectorAll('.nav-link, .nav-why').forEach(el => {
+        el.classList.remove('active');
+      });
+
+      // Activate new tab
+      const selectedView = document.getElementById('view-' + tabId);
+      selectedView.classList.add('active');
+      document.getElementById('nav-' + tabId).classList.add('active');
+    }
+
+    function copyEmail() {
+      const email = "hello@interface.design";
+      navigator.clipboard.writeText(email);
+      
+      const defaultText = document.getElementById('email-text-default');
+      const hoverText = document.getElementById('email-text-hover');
+      const copiedText = document.getElementById('email-text-copied');
+      
+      defaultText.classList.add('hidden');
+      hoverText.classList.add('hidden');
+      hoverText.classList.remove('group-hover:block');
+      copiedText.classList.remove('hidden');
+
+      setTimeout(() => {
+        defaultText.classList.remove('hidden');
+        hoverText.classList.add('group-hover:block');
+        copiedText.classList.add('hidden');
+      }, 2000);
+    }
+  </script>
+</body>
+</html>
