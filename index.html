@@ -1,170 +1,257 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>skwiz ui</title>
-    <!-- Use Tailwind CDN so no build step is needed for GitHub Pages -->
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1, width=device-width" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&display=swap" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              geist: ['Geist', 'sans-serif'],
-            }
-          }
-        }
-      }
-    </script>
-    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500&display=swap" rel="stylesheet">
+    <title>SkwizUI — Design</title>
     <style>
+      /* --- Базовые стили Geist --- */
       body {
         margin: 0;
+        background: white;
+        color: black;
         -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        background-color: white;
+        overflow-x: hidden;
+        font-family: "Geist", sans-serif;
+        font-size: 13px;
+        line-height: 1.625;
       }
-      .view {
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        position: absolute;
-        inset: 0;
+
+      /* --- Тонкая типографика --- */
+      .text-micro {
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        opacity: 0.4;
+      }
+
+      .text-heading {
+        font-size: 18px;
+        font-weight: 300;
+        letter-spacing: -0.02em;
+        line-height: 1.3;
+      }
+
+      /* --- Скролл-анимация "Слои" (Sticky Sections) --- */
+      .section-wrapper {
+        position: relative;
+        z-index: 1;
+      }
+
+      section {
+        position: sticky;
+        top: 0;
+        background: white;
+        min-height: 100vh;
         display: flex;
         flex-direction: column;
-        align-items: center;
+        justify-content: center;
+        border-bottom: 1px solid rgba(0,0,0,0.03);
+      }
+
+      /* Зернистый фон для "человечности" */
+      body::after {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
         pointer-events: none;
+        background-image: url("https://grainy-gradients.vercel.app/noise.svg");
+        opacity: 0.04;
+        z-index: 9999;
       }
-      .view.active {
+
+      /* Эффект навигации */
+      nav a {
+        position: relative;
+      }
+
+      nav a::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 0;
+        height: 1px;
+        background: black;
+        transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      nav a:hover::after {
+        width: 100%;
+      }
+
+      /* Анимации появления */
+      .reveal {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 1.2s ease, transform 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+      }
+
+      .reveal.revealed {
         opacity: 1;
-        pointer-events: auto;
+        transform: translateY(0);
       }
-      .nav-link {
-        cursor: pointer;
-        transition: color 0.3s, font-weight 0.3s;
-        font-weight: 300;
-      }
-      .nav-link:hover {
-        color: black;
-      }
-      .nav-link.active {
-        font-weight: 500;
-        color: black;
-      }
-      
-      .nav-why {
-        font-weight: 300;
-        background: #c4c4c4;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.3s;
-      }
-      .nav-why:hover {
-        -webkit-text-fill-color: black;
-      }
-      .nav-why.active {
-        font-weight: 500;
-        background: none;
-        -webkit-text-fill-color: black;
+
+      /* Скролл индикатор */
+      .scroll-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 0%;
+        height: 1px;
+        background: black;
+        z-index: 1000;
       }
     </style>
-</head>
-<body class="min-h-screen bg-white font-geist selection:bg-gray-100 flex flex-col items-center sm:items-start pt-[39px] px-[25px] sm:px-[50px] pb-10 box-border text-center leading-normal tracking-normal relative">
+  </head>
+  <body>
+    <div class="scroll-progress"></div>
 
-  <nav class="m-0 flex items-start justify-center sm:justify-start gap-[15px] text-left text-[10px] text-[#c4c4c4] font-geist w-full max-w-[1200px] z-10 relative">
-    <div id="nav-home" class="nav-link active relative" onclick="switchTab('home')">home</div>
-    <div id="nav-price" class="nav-link relative" onclick="switchTab('price')">price</div>
-    <div id="nav-why" class="nav-why relative" onclick="switchTab('why')">why it costs this much.</div>
-  </nav>
+    <!-- Header -->
+    <header class="fixed top-0 w-full px-6 py-5 flex justify-between items-center z-[100] bg-white/80 backdrop-blur-sm">
+      <div class="text-xs font-medium lowercase">skwiz.ui</div>
+      <nav class="flex gap-6">
+        <a href="https://t.me/+tARqJxGLDMNmNDAy" target="_blank" class="text-micro hover:opacity-100 transition-opacity">Works</a>
+        <a href="#process" class="text-micro hover:opacity-100 transition-opacity">Process</a>
+        <a href="#contact" class="text-micro hover:opacity-100 transition-opacity">Contact</a>
+      </nav>
+    </header>
 
-  <div class="flex-1 w-full flex items-center justify-center relative mt-10 sm:mt-0 z-0 h-full min-h-[400px]">
-      
-      <!-- Home View -->
-      <div id="view-home" class="view active justify-center">
-          <div class="w-[259px] flex flex-col items-center gap-5">
-              <div class="relative font-normal text-center text-[13px] text-black">
-                  crafting digital experiences for those who notice the details. focus on high-end ui/ux and minimalist aesthetics. building interfaces that feel as good as they look
-              </div>
-              <div class="flex items-center justify-center w-full py-0">
-                  <div class="flex items-center justify-center gap-2.5">
-                      <button id="email-btn" onclick="copyEmail()" class="group relative cursor-pointer border-none py-[5px] px-10 bg-black rounded-[10px] flex items-center justify-center hover:bg-[#333] transition-all min-w-[100px] h-5 box-border">
-                          <div class="relative text-[8px] font-geist text-white text-center z-[1] shrink-0">
-                              <span id="email-text-default" class="group-hover:hidden whitespace-nowrap">email</span>
-                              <span id="email-text-hover" class="hidden group-hover:block whitespace-nowrap">copy</span>
-                              <span id="email-text-copied" class="hidden whitespace-nowrap">copied</span>
-                          </div>
-                      </button>
-                      
-                      <button onclick="window.open('https://t.me/kyfax', '_blank')" class="cursor-pointer border-[#d9d9d9] border-solid border-[1px] py-[3px] px-8 bg-transparent h-5 flex-1 rounded-[10px] box-border flex items-center justify-center hover:bg-[rgba(191,191,191,0.09)] hover:border-[#bfbfbf] transition-all">
-                          <div class="relative text-[8px] font-geist text-black text-center shrink-0">
-                              telegram
-                          </div>
-                      </button>
-                  </div>
-              </div>
+    <main>
+      <div class="section-wrapper">
+        <!-- Intro -->
+        <section id="intro" class="px-6">
+          <div class="max-w-4xl mx-auto w-full">
+            <div class="reveal">
+              <span class="text-micro">Portfolio 2026</span>
+            </div>
+            <h1 class="text-heading max-w-sm mt-4 reveal" style="transition-delay: 0.1s">
+              minimalist interface design for digital products. <br/>
+              focused on clarity, precision and human experience.
+            </h1>
+            <div class="mt-8 reveal" style="transition-delay: 0.2s">
+                <a href="https://t.me/+tARqJxGLDMNmNDAy" target="_blank" class="text-[10px] uppercase tracking-widest border-b border-black pb-1 hover:opacity-50 transition-opacity">explore works</a>
+            </div>
           </div>
-      </div>
+        </section>
 
-      <!-- Price View -->
-      <div id="view-price" class="view justify-center">
-          <div class="w-[227px] flex flex-col items-center gap-[5px] text-[#c4c4c4]">
-              <div class="flex items-start py-0 px-0">
-                  <div class="relative uppercase tracking-[0.05em] text-[8px]">price: custom logic only.</div>
+        <!-- How it works -->
+        <section id="process" class="px-6 border-t border-neutral-100">
+          <div class="max-w-4xl mx-auto w-full">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 py-12">
+              <div class="flex flex-col gap-3 reveal">
+                  <span class="text-micro">Step — 01</span>
+                  <h4 class="text-sm font-medium">Strategy & Research</h4>
+                  <p class="text-[11px] opacity-40 leading-relaxed font-light">We start by analyzing your vision and goals. I create a solid project structure to ensure every pixel serves a purpose.</p>
               </div>
-              <div class="relative text-[13px] text-black text-center font-normal leading-relaxed">
-                  bespoke digital solutions. starts with a vision, ends with a project. inquire for availability.
+              <div class="flex flex-col gap-3 reveal" style="transition-delay: 0.1s">
+                  <span class="text-micro">Step — 02</span>
+                  <h4 class="text-sm font-medium">Visual Concept</h4>
+                  <p class="text-[11px] opacity-40 leading-relaxed font-light">This is where the magic happens. I craft a unique, high-end visual language using minimalist principles and modern aesthetics.</p>
               </div>
+              <div class="flex flex-col gap-3 reveal" style="transition-delay: 0.2s">
+                  <span class="text-micro">Step — 03</span>
+                  <h4 class="text-sm font-medium">Final Delivery</h4>
+                  <p class="text-[11px] opacity-40 leading-relaxed font-light">You receive pixel-perfect design assets ready for use. I provide full support to ensure everything looks perfect on any screen.</p>
+              </div>
+            </div>
           </div>
-      </div>
+        </section>
 
-      <!-- Why View -->
-      <div id="view-why" class="view justify-center">
-         <div class="max-w-[337px] relative font-normal text-center text-[13px] text-black">
-              you are not paying for pixels. you are paying for the logic that powers your empire. we don’t just design. we build digital infrastructure. simplicity is the ultimate sophistication.
+        <!-- Contact -->
+        <section id="contact" class="px-6 border-t border-neutral-100">
+          <div class="max-w-4xl mx-auto w-full flex flex-col items-center text-center gap-10">
+            <div class="flex flex-col gap-2 reveal">
+              <span class="text-micro">Contact details</span>
+              <h2 class="text-heading lowercase">Let's build together.</h2>
+            </div>
+            
+            <div class="flex flex-col gap-4 reveal" style="transition-delay: 0.1s">
+                <a href="https://t.me/kyfax" target="_blank" class="text-xs font-light lowercase tracking-tight border-b border-black/10 pb-0.5 hover:border-black transition-all">
+                    telegram: @kyfax
+                </a>
+                <a href="mailto:amirmamedgasanov5@gmail.com" class="text-xs font-light lowercase tracking-tight border-b border-black/10 pb-0.5 hover:border-black transition-all">
+                    mail: amirmamedgasanov5@gmail.com
+                </a>
+            </div>
+
+            <footer class="mt-20 w-full flex justify-between items-center opacity-30 border-t border-neutral-100 pt-8 reveal" style="transition-delay: 0.2s">
+              <div class="text-micro">© 2026 SkwizUI</div>
+              <div class="flex gap-4">
+                  <a href="https://t.me/kyfax" class="text-micro hover:opacity-100">TG</a>
+                  <a href="mailto:amirmamedgasanov5@gmail.com" class="text-micro hover:opacity-100">EM</a>
+              </div>
+            </footer>
           </div>
+        </section>
       </div>
+    </main>
 
-  </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+          // 1. Reveal Elements on Scroll
+          const observerOptions = {
+              threshold: 0.1,
+              rootMargin: '0px 0px -50px 0px'
+          };
 
-  <script>
-    function switchTab(tabId) {
-      // Hide all views
-      document.querySelectorAll('.view').forEach(el => {
-        el.classList.remove('active');
+          const revealObserver = new IntersectionObserver((entries) => {
+              entries.forEach(entry => {
+                  if (entry.isIntersecting) {
+                      entry.target.classList.add('revealed');
+                  }
+              });
+          }, observerOptions);
+
+          document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+          // 2. Parallax / Overlap Effect
+          const sections = document.querySelectorAll('section');
+          window.addEventListener('scroll', () => {
+              sections.forEach((section) => {
+                  const rect = section.getBoundingClientRect();
+                  if (rect.top <= 0 && rect.bottom > 0) {
+                      const progress = Math.abs(rect.top) / window.innerHeight;
+                      section.style.opacity = 1 - (progress * 0.5);
+                      section.style.transform = `scale(${1 - (progress * 0.05)})`;
+                  } else {
+                      section.style.opacity = 1;
+                      section.style.transform = `scale(1)`;
+                  }
+              });
+          });
+
+          // 3. Scroll Progress Indicator
+          const progressBar = document.querySelector('.scroll-progress');
+          window.addEventListener('scroll', () => {
+              const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+              const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+              const scrolled = (winScroll / height) * 100;
+              if (progressBar) {
+                  progressBar.style.width = scrolled + "%";
+              }
+          });
+
+          // 4. Smooth Scroll
+          document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+              anchor.addEventListener('click', function (e) {
+                  e.preventDefault();
+                  const targetId = this.getAttribute('href');
+                  const target = document.querySelector(targetId);
+                  if (target) {
+                      window.scrollTo({
+                          top: target.offsetTop,
+                          behavior: 'smooth'
+                      });
+                  }
+              });
+          });
       });
-
-      // Clear active nav states
-      document.querySelectorAll('.nav-link, .nav-why').forEach(el => {
-        el.classList.remove('active');
-      });
-
-      // Activate new tab
-      const selectedView = document.getElementById('view-' + tabId);
-      selectedView.classList.add('active');
-      document.getElementById('nav-' + tabId).classList.add('active');
-    }
-
-    function copyEmail() {
-      const email = "hello@interface.design";
-      navigator.clipboard.writeText(email);
-      
-      const defaultText = document.getElementById('email-text-default');
-      const hoverText = document.getElementById('email-text-hover');
-      const copiedText = document.getElementById('email-text-copied');
-      
-      defaultText.classList.add('hidden');
-      hoverText.classList.add('hidden');
-      hoverText.classList.remove('group-hover:block');
-      copiedText.classList.remove('hidden');
-
-      setTimeout(() => {
-        defaultText.classList.remove('hidden');
-        hoverText.classList.add('group-hover:block');
-        copiedText.classList.add('hidden');
-      }, 2000);
-    }
-  </script>
-</body>
+    </script>
+  </body>
 </html>
