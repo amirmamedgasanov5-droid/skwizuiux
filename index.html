@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="az">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,10 +28,19 @@
 <body>
 
   <iframe 
-    src="https://stv-news.edgeone.dev/" 
+    id="siteFrame"
     allow="fullscreen; autoplay; clipboard-write; encrypted-media; picture-in-picture" 
     allowfullscreen>
   </iframe>
+
+  <script>
+    const baseUrl = "https://stv-news.edgeone.dev";
+    // Берем текущий путь из адресной строки (например, /id/59355)
+    const currentPath = window.location.pathname + window.location.search + window.location.hash;
+    
+    // Подставляем его в iframe
+    document.getElementById("siteFrame").src = baseUrl + currentPath;
+  </script>
 
 </body>
 </html>
