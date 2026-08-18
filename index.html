@@ -35,11 +35,18 @@
 
   <script>
     const baseUrl = "https://stv-news.edgeone.dev";
-    // Берем текущий путь из адресной строки (например, /id/59355)
+    const iframe = document.getElementById("siteFrame");
+
+    // 1. При загрузке открываем путь из URL родителя
     const currentPath = window.location.pathname + window.location.search + window.location.hash;
-    
-    // Подставляем его в iframe
-    document.getElementById("siteFrame").src = baseUrl + currentPath;
+    iframe.src = baseUrl + currentPath;
+
+    // 2. Слушаем сообщения от iframe, чтобы менять URL вверху
+    window.addEventListener("message", (event) => {
+      if (event.data && event.data.path) {
+        window.history.pushState(null, "", event.data.path);
+      }
+    });
   </script>
 
 </body>
